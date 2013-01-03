@@ -1,5 +1,5 @@
 # Airfield
-Simple hipache web-interface
+Simple [hipache](https://github.com/dotcloud/hipache) web-interface
 
 Check packages from package.json
 Requires ofcourse hipache and redis installed for same server with airfield
