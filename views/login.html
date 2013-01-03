@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="span3">
+	<h1>{{title}}</h1>
+	<form method="post" action="/login">
+	<input type="text" name="user" placeholder="Username">
+	<input type="password" name="password" placeholder="Password">
+	<input type="submit" name="submit" class="btn btn-primary" value="Login">
+	</form>
+	</div>
+</div>
+{% endblock %}

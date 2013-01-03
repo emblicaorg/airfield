@@ -1,0 +1,133 @@
+{% extends "template.html" %}
+{% block content %}
+<style>
+	.block{
+		border: 1px solid #DDD;
+		padding: 6px;
+		margin: 10px;
+	}
+	.editable:focus{
+		margin: 5px;
+		padding: 5px;
+		border: 1px solid #DDD;
+	}
+</style>
+
+<div class="row">
+	<div class="span8">
+	<h1>{{title|title}} <button class="btn btn-mini btn-success add"><i class="icon icon-plus"></i></button></h1>
+	</div>
+</div>
+<div class="row">
+	<div class="span12 routes">
+	</div>
+</div>
+
+<div id="route-modal" class="modal hide fade" role="dialog">
+  <div class="modal-header">
+    <h3>New Route</h3>
+  </div>
+  <div class="modal-body">
+    <p>New route address</p>
+	<input type="text" id="route-address">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn btn-primary set-address">Save changes</a>
+  </div>
+</div>
+
+	<script type="text/x-handlebars-template" id="route-template">
+	</script>
+
+	<script>
+		function edited(pt){
+			$(pt).closest('.block').attr("edited", "true").find('.save').removeAttr('disabled');
+		}
+		function testUrl(pt){
+			var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+			if(!urlPattern.test($(pt).html())){
+				$(pt).closest("tr").addClass("error");
+				$(pt).closest('.block').find('.save').attr('disabled', 'true');
+			}else{
+				$(pt).closest("tr").removeClass("error");
+				$(pt).closest('.block').find('.save').removeAttr('disabled');
+			}
+		}
+		Handlebars.registerHelper('title', function(entry){
+			return entry.replace(/^frontend:/, "");
+		});
+		Handlebars.registerHelper('first', function(list){
+			return list[0];
+		});
+		Handlebars.registerHelper('iters', function(context, options){
+			var ret = "";
+			for(var i=1, j=context.length; i<j; i++){ // >
+				ret = ret + options.fn(context[i]);
+			}
+			return ret;
+		});
+		var tpl = "";
+		$(document).ready(function(){
+			$.get("/templates/routes.tpl", function(data){
+				tpl = data;
+				$.getJSON("/ajax/routes", function(data){
+					//console.log(data);
+					var template = Handlebars.compile(tpl);
+					$(".routes").html(template({data:data}));
+				});
+			});
+		});
+		$(".editable").live('input', function(){
+			edited(this);
+			if($(this).hasClass("frontend-host-item")){
+				testUrl(this);
+			}
+		});
+		$(".add-host").live('click', function(){
+			var field = $('<tr><td contentEditable="true" class="editable frontend-host-item new">http://</td><td><button class="btn btn-mini btn-danger remove-host"><i class="icon icon-trash"></i></button></td></tr>').appendTo($(this).closest("thead").next()).hide().fadeIn().find('.editable').focus();
+			edited(this);
+			testUrl(field);
+		});
+		$(".remove-host").live('click', function(){
+			$(this).closest("tr").fadeOut().attr("data-deleted", "true");
+			edited(this);
+		});
+		$(".remove").live('click', function(){
+			var block = $(this).closest(".block")
+			$.post('/ajax/remove', {key:block.attr('data-frontend')}, function(data){
+				block.slideUp().attr("data-deleted", "true");
+			});
+		});
+		$(".add").live('click', function(){
+			var template = Handlebars.compile(tpl);
+			var route = $(template({data:[ {name:"Empty", items:["no_name", "http://"] }] })).appendTo(".routes").hide().slideDown();
+			$("#route-modal").modal({keyboard: false});
+			$("#route-modal").on('shown', function(){
+				$("#route-address").focus();
+			});
+			
+			$(".set-address").click(function(){
+				var addr = $('#route-address').val();
+				$(route).find('.frontend-title').html(addr);
+				$(route).attr('data-frontend', 'frontend:'+addr);
+				
+				$("#route-modal").modal('hide');
+			});
+		});
+		$('.save').live('click', function(){
+			var block = $(this).closest(".block")
+			var hosts = [];
+			$(block).find(".frontend-host-item").each(function(index){
+				hosts.push($.trim($(this).text()));
+			});
+			var data = {route: block.attr('data-frontend'), name: $.trim(block.find('.frontend-name').text()), hosts : hosts}
+			$(this).attr("disabled", "true").attr('data-edited', 'false');
+			var loader = $('<img src="/images/ajax-loader.gif" alt="loading...">').appendTo(block);
+			$.post("/ajax/save", {data: data}, function(res){
+				loader.remove();
+			});
+			//console.log(data);
+		});
+	</script>
+
+{% endblock content %}
