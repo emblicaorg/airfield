@@ -10,6 +10,7 @@
     "swig": "*",
     "consolidate": "*",
     "redis": "*",
+    "connect-redis": "*",
     "async": "*"
   }
 }

@@ -41,6 +41,7 @@
 
 	<script>
 		function edited(pt){
+			console.log("edited");
 			$(pt).closest('.block').attr("edited", "true").find('.save').removeAttr('disabled');
 		}
 		function testUrl(pt){
@@ -77,7 +78,7 @@
 				});
 			});
 		});
-		$(".editable").live('input', function(){
+		$('.editable').live('input', function(){
 			edited(this);
 			if($(this).hasClass("frontend-host-item")){
 				testUrl(this);
@@ -93,12 +94,13 @@
 			edited(this);
 		});
 		$(".remove").live('click', function(){
+			console.log("Removing...");
 			var block = $(this).closest(".block")
 			$.post('/ajax/remove', {key:block.attr('data-frontend')}, function(data){
 				block.slideUp().attr("data-deleted", "true");
 			});
 		});
-		$(".add").live('click', function(){
+		$(".add").on('click', function(){
 			var template = Handlebars.compile(tpl);
 			var route = $(template({data:[ {name:"Empty", items:["no_name", "http://"] }] })).appendTo(".routes").hide().slideDown();
 			$("#route-modal").modal({keyboard: false});
@@ -118,13 +120,18 @@
 			var block = $(this).closest(".block")
 			var hosts = [];
 			$(block).find(".frontend-host-item").each(function(index){
-				hosts.push($.trim($(this).text()));
+				console.log($(this).closest('tr').attr('data-deleted'));
+				if($(this).closest('tr').attr('data-deleted') != 'true'){
+					hosts.push($.trim($(this).text()));
+				}
 			});
 			var data = {route: block.attr('data-frontend'), name: $.trim(block.find('.frontend-name').text()), hosts : hosts}
 			$(this).attr("disabled", "true").attr('data-edited', 'false');
 			var loader = $('<img src="/images/ajax-loader.gif" alt="loading...">').appendTo(block);
 			$.post("/ajax/save", {data: data}, function(res){
-				loader.remove();
+				loader.delay(500, function(){
+					this.remove();
+				});
 			});
 			//console.log(data);
 		});

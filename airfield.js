@@ -3,7 +3,10 @@
  * Module dependencies.
  */
 
+var settings = require('./settings').settings;
+
 var express = require('express')
+  , RedisStore = require('connect-redis')(express)
   , routes = require('./routes')
   , http = require('http')
   , path = require('path');
@@ -17,7 +20,7 @@ var swig = require('swig');
 
 var app = express();
 
-var settings = {username: "admin", password: "kissa2", port: 3000};
+
 
 app.configure(function(){
   app.set('port', process.env.PORT || settings.port);
@@ -34,8 +37,11 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
-  app.use(express.session());
+  app.use(express.cookieParser(settings.cookieSecret));
+  app.use(express.session({
+	secret: settings.sessionSecret,
+	store: new RedisStore
+}));
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
   //app.use(express.basicAuth('username', 'password'));
