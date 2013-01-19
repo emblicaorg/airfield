@@ -1,3 +1,7 @@
+/*
+	Settings for airfield
+	Tweak settings before using in production
+*/
 exports.settings = {
 					username: "admin",
 					password: "kissa2",
