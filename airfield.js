@@ -15,6 +15,8 @@ var async = require('async');
 var redis = require('redis');
 var db = redis.createClient();
 
+var request = require('request');
+
 var cons = require('consolidate');
 var swig = require('swig');
 
@@ -136,6 +138,45 @@ app.post('/ajax/remove', checkAuth, function(req, res){
 		}else{
 			res.send('{"response":"OK"}');
 		}
+	});
+});
+
+app.get('/ajax/getInstances', checkAuth, function(req, res){
+	if(!settings.enable_openstack){
+		res.send(400, {error: 'Openstack support is not enabled'});
+		return;
+	}
+	var params = {
+					auth:{
+							passwordCredentials: {
+								username: settings.os_api_username,
+								password: settings.os_api_password
+							},
+							tenantId: settings.os_api_tenant
+						}
+				 };
+	request({url: settings.os_keystone_url+'/v2.0/tokens', method:'POST', body: params, json:true}, function(err, response, body){
+		//console.log(body);
+		var token = body.access.token.id;
+		//res.send(body);
+		var url = settings.os_nova_url+'/v2/'+settings.os_api_tenant+'/servers/detail?all_tenants=1';
+		//console.log(url);
+		request({url: url, method:'GET', headers:{'X-Auth-Token':token}, json:true}, function(err, response, body){
+			//console.log(body);
+			var instances = [];
+			async.forEach(body.servers, function(instance, cb){
+				var addresses = [];
+				for (var i = 0; i < instance.addresses.private.length; i++) {
+					addresses.push(instance.addresses.private[i].addr);
+				};
+				var tolist = {id:instance.id, name:instance.name, status:instance.status, addresses:addresses}
+				instances.push(tolist);
+				cb();
+			}, function(err){
+				res.send(instances);
+			});
+			
+		});	
 	});
 });
 

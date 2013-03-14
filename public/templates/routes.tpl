@@ -1,5 +1,5 @@
 {{#each data}}
-<div class="block span5" data-frontend="{{this.name}}">
+<div class="block span4" data-frontend="{{this.name}}">
 	<strong class="editable frontend-title">
 		{{title this.name}}
 	</strong>

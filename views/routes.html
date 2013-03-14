@@ -2,27 +2,51 @@
 {% block content %}
 <style>
 	.block{
+	
 		border: 1px solid #DDD;
 		padding: 6px;
 		margin: 10px;
+	
+	}
+	.editable{
+		margin: 5px;
+		padding: 5px;
+		border: 1px solid transparent;
+		outline: 0px solid transparent;
 	}
 	.editable:focus{
 		margin: 5px;
 		padding: 5px;
 		border: 1px solid #DDD;
+		outline: 0px solid transparent;
 	}
+
 </style>
-
 <div class="row">
-	<div class="span8">
-	<h1>{{title|title}} <button class="btn btn-mini btn-success add"><i class="icon icon-plus"></i></button></h1>
-	</div>
+	<h1>Management</h1>
 </div>
 <div class="row">
-	<div class="span12 routes">
+	<div class="span2">
+		<h2>{{title|title}}</h2>
+		<p>
+		<small>List of routes</small><br>
+		<small><button class="btn btn-mini btn-success add"><i class="icon icon-plus"></i></button></small>
+		</p>
+	</div>
+	<div class="span10 routes">
 	</div>
 </div>
+<div class="row" id="instance-row">
+	<div class="span2">
+		<h2>Instances</h2>
+		<small>
+			List of Openstack-instances
+		</small>
+	</div>
+	<div class="span8" id="instances">
 
+	</div>
+</div>
 <div id="route-modal" class="modal hide fade" role="dialog">
   <div class="modal-header">
     <h3>New Route</h3>
@@ -40,11 +64,27 @@
 	</script>
 
 	<script>
+	var resolve = [];
 		function edited(pt){
 			console.log("edited");
 			$(pt).closest('.block').attr("edited", "true").find('.save').removeAttr('disabled');
 		}
 		function testUrl(pt){
+			try{
+				var url = $(pt).html();
+				url = url.split(':');
+				url = url[1].replace('//', '');
+				//console.log(url);
+				if(url in resolve){
+					//console.log(resolve[url]);
+					$(pt).parent().parent().tooltip('destroy').tooltip({title:resolve[url], placement: 'left', trigger: 'hover focus', delay: 50}).tooltip('show');
+					setTimeout(function(){
+						$(pt).parent().parent().tooltip('destroy');
+					}, 5000);
+				}
+			}catch(e){
+				//do nothing but catch
+			}
 			var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
 			if(!urlPattern.test($(pt).html())){
 				$(pt).closest("tr").addClass("error");
@@ -76,6 +116,28 @@
 					var template = Handlebars.compile(tpl);
 					$(".routes").html(template({data:data}));
 				});
+			});
+			$.getJSON('/ajax/getInstances', function(data){
+				var body = $("<tbody></tbody>");
+				for (var i = 0; i < data.length; i++) {
+					var row = $("<tr></tr>");
+					$("<td></td>").html(data[i].name).appendTo(row);
+					for (var a = 0; a < data[i].addresses.length; a++) {
+						resolve[data[i].addresses[a]] = data[i].name;
+					};
+					$("<td></td>").html(data[i].addresses.join(', ')).appendTo(row);
+					if(data[i].status == 'ACTIVE'){
+						status = '<span class="label label-success">ACTIVE</span>';
+					}else{
+						status = '<span class="label label-danger">'+data[i].status+'</span>';
+					}
+					$("<td></td>").html(status).appendTo(row);
+					body.append(row);
+				};
+				$("<table></table>").addClass('table table-striped').append($("<thead></thead>").append('<tr><th>Name</th><th>IPs</th><th>Status</th></tr>')).append(body).appendTo('#instances');
+				console.log(data);
+			}).error(function(){
+				$('#instance-row').hide();
 			});
 		});
 		$('.editable').live('input', function(){
