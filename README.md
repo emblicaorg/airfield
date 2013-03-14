@@ -18,7 +18,9 @@ Default login credientials are:
 	User: admin
 	Pass: kissa2
 
-You can change those modifying airfield.js-file
+You can change those modifying **settings.js**-file
+
+**If you are using this for a real purpose not just testing, tweak other settings too.**
 
 ## ToDo
 
