@@ -20,6 +20,13 @@ Default login credientials are:
 
 You can change those modifying **settings.js**-file
 
+## Openstack support
+
+If you are doing lot's of proxying to Openstack instances, you can enable openstack-support.
+The management console uses openstack-api to fetch ips, names and statuses of all instances.
+This feature is tested with Folsom.
+All you have to do is enable it from **settings.js** and change the login credientials in the same file.
+
 **If you are using this for a real purpose not just testing, tweak other settings too.**
 
 ## ToDo
@@ -27,5 +34,4 @@ You can change those modifying **settings.js**-file
  * Better AJAX-message construction
  * Statistics
  * Search
- * List-view
  * Paging
