@@ -13,7 +13,7 @@ var express = require('express')
 
 var async = require('async');
 var redis = require('redis');
-var db = redis.createClient();
+var db = redis.createClient(settings.redis.port, settings.redis.host);
 
 var request = require('request');
 
@@ -42,7 +42,7 @@ app.configure(function(){
   app.use(express.cookieParser(settings.cookieSecret));
   app.use(express.session({
 	secret: settings.sessionSecret,
-	store: new RedisStore
+	store: new RedisStore({host:settings.redis.host, port:settings.redis.port})
 }));
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
