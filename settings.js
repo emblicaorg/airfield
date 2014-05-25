@@ -29,6 +29,7 @@
 */
 
 exports.settings = {
+<<<<<<< HEAD
                                         username: "admin",
                                         password: "kissa2",
                                         port: 443,
@@ -46,3 +47,17 @@ exports.settings = {
 						}
 					};
 
+=======
+    username: "admin",
+    password: "kissa2",
+    port: 3000,
+    cookieSecret: "thisissecret",
+    sessionSecret: "secretisthistoo",
+    enable_openstack: false,
+    os_api_username: "admin",
+    os_api_password: "goodopenstackpassword",
+    os_api_tenant: "tenantidofinstances",
+    os_keystone_url: "http://10.0.0.1:5000",
+    os_nova_url: "http://10.0.0.1:8774"
+};
+>>>>>>> f920d23099dba2ea75b081cabc4914cb534c80d7
