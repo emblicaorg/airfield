@@ -13,7 +13,7 @@ var express = require('express')
 
 var async = require('async');
 var redis = require('redis');
-var db = redis.createClient(settings.redis.port, settings.redis.host);
+var db = redis.createClient(process.env.REDIS_PORT || settings.REDIS_PORT, process.env.REDIS_HOST || settings.REDIS_HOST);
 
 var request = require('request');
 
@@ -42,7 +42,7 @@ app.configure(function(){
   app.use(express.cookieParser(settings.cookieSecret));
   app.use(express.session({
 	secret: settings.sessionSecret,
-	store: new RedisStore({host:settings.redis.host, port:settings.redis.port})
+	store: new RedisStore
 }));
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
@@ -58,11 +58,7 @@ app.get('/', routes.index);
 
 // Authentication mechanism
 function checkAuth(req, res, next){
-	if(!req.session.user_id){
-		res.redirect('/login');
-	}else{
-		next();
-	}
+    next();
 }
 
 app.get('/login', function(req, res){
@@ -72,7 +68,6 @@ app.get('/login', function(req, res){
 app.post('/login', function(req, res){
 	var post = req.body;
 	if(post.user == settings.username && post.password == settings.password){
-		req.session.user_id = "loggedin";
 		res.redirect('/routes');
 	}else{
 		res.send("Your login credientials are invalid!");

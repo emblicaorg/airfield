@@ -24,25 +24,18 @@
 		Keystone api url
 	os_nova_url
 		Nova api url
-	redis
-		Redis settings
 */
 
 exports.settings = {
-                                        username: "admin",
-                                        password: "kissa2",
-                                        port: 443,
-                                        cookieSecret: "hurrdurr",
-                                        sessionSecret: "changeit",
-                                        enable_openstack: false,
-                                        os_api_username: "admin",
-                                        os_api_password: "apipasswd",
-                                        os_api_tenant: "c04653e8b9b4461285e9",
-                                        os_keystone_url: "http://10.0.0.1:5000",
-                                        os_nova_url: "http://10.0.0.1:8774",
-                                        redis: {
-						host: "172.16.42.1",
-						port: 6379
-						}
-					};
-
+    username: "admin",
+    password: "kissa2",
+    port: 3000,
+    cookieSecret: "thisissecret",
+    sessionSecret: "secretisthistoo",
+    enable_openstack: false,
+    os_api_username: "admin",
+    os_api_password: "goodopenstackpassword",
+    os_api_tenant: "tenantidofinstances",
+    os_keystone_url: "http://10.0.0.1:5000",
+    os_nova_url: "http://10.0.0.1:8774"
+};
