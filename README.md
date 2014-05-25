@@ -19,6 +19,9 @@ Default login credientials are:
 	Pass: kissa2
 
 You can change those modifying **settings.js**-file
+### Warning!
+Currently authentication is broken so there is really not any kind of session management.
+You have to implement **checkAuth**-middleware to check if user is logged in, **login** and **logout** routines.
 
 ## Openstack support
 
@@ -32,6 +35,7 @@ All you have to do is enable it from **settings.js** and change the login credie
 ## ToDo
 
  * Better AJAX-message construction
+ * Authentication
  * Statistics
  * Search
  * Paging
