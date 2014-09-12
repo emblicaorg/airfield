@@ -1,4 +1,4 @@
-from ubuntu:12.04
+from ubuntu:latest
 maintainer Nick Stinemates
 
 run apt-get -y update
