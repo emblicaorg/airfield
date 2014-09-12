@@ -2,7 +2,8 @@ from ubuntu:latest
 maintainer Nick Stinemates
 
 run apt-get -y update
-run apt-get install -y wget nodejs nodejs-legacy npm
+run apt-get install -y wget 
+run wget -O - http://nodejs.org/dist/v0.8.23/node-v0.8.23-linux-x64.tar.gz | tar -C /usr/local/ --strip-components=1 -zxv
 add . /airfield
 run cd /airfield && npm install
 
