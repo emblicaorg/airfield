@@ -37,5 +37,7 @@ exports.settings = {
     os_api_password: "goodopenstackpassword",
     os_api_tenant: "tenantidofinstances",
     os_keystone_url: "http://10.0.0.1:5000",
-    os_nova_url: "http://10.0.0.1:8774"
+    os_nova_url: "http://10.0.0.1:8774",
+    REDIS_PORT: 6379,
+    REDIS_HOST: '127.0.0.1'
 };

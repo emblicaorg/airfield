@@ -7,7 +7,7 @@
 var settings = require(process.env.NODE_CONFIG || './settings').settings;
 
 var express = require('express')
-  , RedisStore = require('connect-redis')(express)
+  , RedisStore = require('connect-redis')(express.session)
   , routes = require('./routes')
   , http = require('http')
   , path = require('path');
