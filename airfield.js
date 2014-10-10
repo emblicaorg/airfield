@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var settings = require('./settings').settings;
+var settings = require(process.env.NODE_CONFIG || './settings').settings;
 
 var express = require('express')
   , RedisStore = require('connect-redis')(express)
