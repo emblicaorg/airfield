@@ -31,10 +31,6 @@ app.configure(function(){
   console.log(__dirname);
   app.engine('.html', cons.swig);
   app.set('view engine', 'html');
-  swig.init({
-	root: __dirname + '/views',
-	allowError: true	
-  }); 
 // app.set('view options', layout: false);
   app.use(express.favicon());
   app.use(express.logger('dev'));

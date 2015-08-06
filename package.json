@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "express": "3.0.5",
-    "swig": "0.14.0",
+    "swig": "1.0.0",
     "consolidate": "*",
     "redis": "*",
     "connect-redis": "*",
