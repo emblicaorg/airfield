@@ -55,7 +55,11 @@ app.get('/', routes.index);
 
 // Authentication mechanism
 function checkAuth(req, res, next){
-    next();
+    if (!req.session.user_id) {
+        res.send('You are not authorized to view this page');
+    } else {
+      next();
+    }
 }
 
 app.get('/login', function(req, res){
@@ -65,6 +69,7 @@ app.get('/login', function(req, res){
 app.post('/login', function(req, res){
 	var post = req.body;
 	if(post.user == settings.username && post.password == settings.password){
+		req.session.user_id = post.user;
 		res.redirect('/routes');
 	}else{
 		res.send("Your login credientials are invalid!");
