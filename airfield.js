@@ -37,13 +37,10 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser(settings.cookieSecret));
-  app.use(express.session({
-	secret: settings.sessionSecret,
-	store: new RedisStore
-}));
+
+  app.use(express.session({secret: settings.sessionSecret}));
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
-  //app.use(express.basicAuth('username', 'password'));
 });
 
 app.configure('development', function(){
