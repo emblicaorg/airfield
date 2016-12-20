@@ -1,0 +1,12 @@
+[Unit]
+Description=Airfield is a web interface for hipache to manage virtual hosts
+After=network-online.target
+
+[Service]
+Environment="HOME=/home/airfield"
+User=airfield
+WorkingDirectory=/opt/airfield
+ExecStart=/usr/bin/node airfield.js
+
+[Install]
+WantedBy=multi-user.target
